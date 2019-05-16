@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.qhit.medicinePurchaseInfo.dao.IMedicinePurchaseInfoDao"> 
+	<!-- 自定义结果集 --> 
+	<resultMap id="BaseResultMap" type="com.qhit.medicinePurchaseInfo.pojo.MedicinePurchaseInfo"> 
+		<id property="pchId" column="PCH_ID" javaType="java.lang.Integer"></id> 
+		<result property="medicineCodeid" column="MEDICINE_CODEID" javaType="java.lang.Integer"></result> 
+		<result property="manCode" column="MAN_CODE" javaType="java.lang.Integer"></result> 
+		<result property="pchAmt" column="PCH_AMT" javaType="java.lang.Integer"></result> 
+		<result property="pchPrice" column="PCH_PRICE" javaType="java.lang.Double"></result> 
+		<result property="pchTotal" column="PCH_TOTAL" javaType="java.lang.Double"></result> 
+		<result property="status" column="STATUS" javaType="java.lang.Integer"></result> 
+		<result property="pchUserid" column="PCH_USERID" javaType="java.lang.Integer"></result> 
+		<result property="pchDate" column="PCH_DATE" javaType="java.lang.String"></result> 
+		<result property="apprvUserid" column="APPRV_USERID" javaType="java.lang.Integer"></result> 
+		<result property="apprvDate" column="APPRV_DATE" javaType="java.lang.String"></result>
+		<association property="medicineCode" select="com.qhit.medicineCode.dao.IMedicineCodeDao.findById" column="MEDICINE_CODEID"></association>
+		<association property="baseManufacturer" select="com.qhit.baseManufacturer.dao.IBaseManufacturerDao.findById" column="MAN_CODE"></association>
+	</resultMap>
+ 
+	<!-- 在各种标签中，id属性必须与接口中的方法名一样，id的值必须是唯一的，parameterType指查询时使用的参数类型， 
+	resultType属性指明查询返回的结果集类型    --> 
+ 
+	<sql id="Base_Column_List" > 
+		PCH_ID,MEDICINE_CODEID,MAN_CODE,PCH_AMT,PCH_PRICE,PCH_TOTAL,STATUS,PCH_USERID,PCH_DATE,APPRV_USERID,APPRV_DATE 
+	</sql> 
+	<select id="findById" resultMap="BaseResultMap" parameterType="java.lang.Integer" > 
+		select 
+		<include refid="Base_Column_List" /> 
+		from medicine_purchase_info 
+		where PCH_ID = #{pchId} 
+	</select> 
+	<delete id="delete" parameterType="java.lang.Integer" > 
+		delete from medicine_purchase_info 
+		where PCH_ID = #{pchId} 
+	</delete> 
+	<insert id="insert" parameterType="com.qhit.medicinePurchaseInfo.pojo.MedicinePurchaseInfo" > 
+		insert into medicine_purchase_info(MEDICINE_CODEID,MAN_CODE,PCH_AMT,PCH_PRICE,PCH_TOTAL,STATUS,PCH_USERID,PCH_DATE,APPRV_USERID,APPRV_DATE) 
+		values (#{medicineCodeid},#{manCode},#{pchAmt},#{pchPrice},#{pchTotal},#{status},#{pchUserid},#{pchDate},#{apprvUserid},#{apprvDate}) 
+	</insert> 
+	<update id="updateSelective" parameterType="com.qhit.medicinePurchaseInfo.pojo.MedicinePurchaseInfo" > 
+		update medicine_purchase_info 
+		<set > 
+			<if test="medicineCodeid != null and medicineCodeid!='' " > 
+				MEDICINE_CODEID = #{medicineCodeid}, 
+			</if> 
+			<if test="manCode != null and manCode!='' " > 
+				MAN_CODE = #{manCode}, 
+			</if> 
+			<if test="pchAmt != null and pchAmt!='' " > 
+				PCH_AMT = #{pchAmt}, 
+			</if> 
+			<if test="pchPrice != null and pchPrice!='' " > 
+				PCH_PRICE = #{pchPrice}, 
+			</if> 
+			<if test="pchTotal != null and pchTotal!='' " > 
+				PCH_TOTAL = #{pchTotal}, 
+			</if> 
+			<if test="status != null and status!='' " > 
+				STATUS = #{status}, 
+			</if> 
+			<if test="pchUserid != null and pchUserid!='' " > 
+				PCH_USERID = #{pchUserid}, 
+			</if> 
+			<if test="pchDate != null and pchDate!='' " > 
+				PCH_DATE = #{pchDate}, 
+			</if> 
+			<if test="apprvUserid != null and apprvUserid!='' " > 
+				APPRV_USERID = #{apprvUserid}, 
+			</if> 
+			<if test="apprvDate != null and apprvDate!='' " > 
+				APPRV_DATE = #{apprvDate}, 
+			</if> 
+		</set> 
+		where PCH_ID = #{pchId} 
+	</update> 
+	<update id="update" parameterType="com.qhit.medicinePurchaseInfo.pojo.MedicinePurchaseInfo" > 
+		update medicine_purchase_info 
+		set  MEDICINE_CODEID = #{medicineCodeid}, MAN_CODE = #{manCode}, PCH_AMT = #{pchAmt}, PCH_PRICE = #{pchPrice}, PCH_TOTAL = #{pchTotal}, STATUS = #{status}, PCH_USERID = #{pchUserid}, PCH_DATE = #{pchDate}, APPRV_USERID = #{apprvUserid}, APPRV_DATE = #{apprvDate} 
+		where PCH_ID = #{pchId} 
+	</update> 
+	<select id="findAll" resultMap="BaseResultMap" > 
+		select 
+		<include refid="Base_Column_List" /> 
+		from medicine_purchase_info 
+	</select>
+	<select id="preInstockList" resultMap="BaseResultMap" >
+		select
+		<include refid="Base_Column_List" />
+		from medicine_purchase_info
+		where status=2
+	</select>
+	<select id="findByMedicineCodeid" resultMap="BaseResultMap" parameterType="java.lang.Integer" > 
+		select 
+		<include refid="Base_Column_List" /> 
+		from medicine_purchase_info 
+		where MEDICINE_CODEID = #{medicineCodeid} 
+	</select> 
+	<select id="findByManCode" resultMap="BaseResultMap" parameterType="java.lang.Integer" > 
+		select 
+		<include refid="Base_Column_List" /> 
+		from medicine_purchase_info 
+		where MAN_CODE = #{manCode} 
+	</select> 
+	<select id="findByPchAmt" resultMap="BaseResultMap" parameterType="java.lang.Integer" > 
+		select 
+		<include refid="Base_Column_List" /> 
+		from medicine_purchase_info 
+		where PCH_AMT = #{pchAmt} 
+	</select> 
+	<select id="findByPchPrice" resultMap="BaseResultMap" parameterType="java.lang.Double" > 
+		select 
+		<include refid="Base_Column_List" /> 
+		from medicine_purchase_info 
+		where PCH_PRICE = #{pchPrice} 
+	</select> 
+	<select id="findByPchTotal" resultMap="BaseResultMap" parameterType="java.lang.Double" > 
+		select 
+		<include refid="Base_Column_List" /> 
+		from medicine_purchase_info 
+		where PCH_TOTAL = #{pchTotal} 
+	</select> 
+	<select id="findByStatus" resultMap="BaseResultMap" parameterType="java.lang.Integer" > 
+		select 
+		<include refid="Base_Column_List" /> 
+		from medicine_purchase_info 
+		where STATUS = #{status} 
+	</select> 
+	<select id="findByPchUserid" resultMap="BaseResultMap" parameterType="java.lang.Integer" > 
+		select 
+		<include refid="Base_Column_List" /> 
+		from medicine_purchase_info 
+		where PCH_USERID = #{pchUserid} 
+	</select> 
+	<select id="findByPchDate" resultMap="BaseResultMap" parameterType="java.lang.String" > 
+		select 
+		<include refid="Base_Column_List" /> 
+		from medicine_purchase_info 
+		where PCH_DATE = #{pchDate} 
+	</select> 
+	<select id="findByApprvUserid" resultMap="BaseResultMap" parameterType="java.lang.Integer" > 
+		select 
+		<include refid="Base_Column_List" /> 
+		from medicine_purchase_info 
+		where APPRV_USERID = #{apprvUserid} 
+	</select> 
+	<select id="findByApprvDate" resultMap="BaseResultMap" parameterType="java.lang.String" > 
+		select 
+		<include refid="Base_Column_List" /> 
+		from medicine_purchase_info 
+		where APPRV_DATE = #{apprvDate} 
+	</select> 
+	<delete id="deleteBatch" parameterType="java.util.Arrays"> 
+		delete from medicine_purchase_info where PCH_ID in 
+		<foreach collection="array" item="id" open="(" close=")" separator=","> 
+			#{id} 
+		</foreach> 
+	</delete> 
+	<select id="search" parameterType="com.qhit.medicinePurchaseInfo.pojo.MedicinePurchaseInfo" resultMap="BaseResultMap"> 
+		select * from  medicine_purchase_info 
+		<where > 
+			<if test="medicineCodeid != null and medicineCodeid!='' " > 
+				 and MEDICINE_CODEID = #{medicineCodeid} 
+			</if> 
+			<if test="manCode != null and manCode!='' " > 
+				 and MAN_CODE = #{manCode} 
+			</if> 
+			<if test="pchAmt != null and pchAmt!='' " > 
+				 and PCH_AMT = #{pchAmt} 
+			</if> 
+			<if test="pchPrice != null and pchPrice!='' " > 
+				 and PCH_PRICE = #{pchPrice} 
+			</if> 
+			<if test="pchTotal != null and pchTotal!='' " > 
+				 and PCH_TOTAL = #{pchTotal} 
+			</if> 
+			<if test="status != null and status!='' " > 
+				 and STATUS = #{status} 
+			</if> 
+			<if test="pchUserid != null and pchUserid!='' " > 
+				 and PCH_USERID = #{pchUserid} 
+			</if> 
+			<if test="pchDate != null and pchDate!='' " > 
+				 and PCH_DATE = #{pchDate} 
+			</if> 
+			<if test="apprvUserid != null and apprvUserid!='' " > 
+				 and APPRV_USERID = #{apprvUserid} 
+			</if> 
+			<if test="apprvDate != null and apprvDate!='' " > 
+				 and APPRV_DATE = #{apprvDate} 
+			</if> 
+		</where> 
+	</select> 
+</mapper> 
