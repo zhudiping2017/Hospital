@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.qhit.baseFunction.dao.IBaseFunctionDao"> 
+	<!-- 自定义结果集 --> 
+	<resultMap id="BaseResultMap" type="com.qhit.baseFunction.pojo.BaseFunction"> 
+		<id property="fid" column="fid" javaType="java.lang.Integer"></id> 
+		<result property="fname" column="fname" javaType="java.lang.String"></result> 
+		<result property="mid" column="mid" javaType="java.lang.Integer"></result> 
+		<result property="url" column="url" javaType="java.lang.String"></result>
+		<association property="baseModule" select="com.qhit.baseModule.dao.IBaseModuleDao.findById" column="mid"></association>
+	</resultMap> 
+ 
+	<!-- 在各种标签中，id属性必须与接口中的方法名一样，id的值必须是唯一的，parameterType指查询时使用的参数类型， 
+	resultType属性指明查询返回的结果集类型    --> 
+ 
+	<sql id="Base_Column_List" > 
+		fid,fname,mid,url 
+	</sql> 
+	<select id="findById" resultMap="BaseResultMap" parameterType="java.lang.Integer" > 
+		select 
+		<include refid="Base_Column_List" /> 
+		from base_function 
+		where fid = #{fid} 
+	</select> 
+	<delete id="delete" parameterType="java.lang.Integer" > 
+		delete from base_function 
+		where fid = #{fid} 
+	</delete> 
+	<insert id="insert" parameterType="com.qhit.baseFunction.pojo.BaseFunction" > 
+		insert into base_function(fname,mid,url) 
+		values (#{fname},#{mid},#{url}) 
+	</insert> 
+	<update id="updateSelective" parameterType="com.qhit.baseFunction.pojo.BaseFunction" > 
+		update base_function 
+		<set > 
+			<if test="fname != null and fname!='' " > 
+				fname = #{fname}, 
+			</if> 
+			<if test="mid != null and mid!='' " > 
+				mid = #{mid}, 
+			</if> 
+			<if test="url != null and url!='' " > 
+				url = #{url}, 
+			</if> 
+		</set> 
+		where fid = #{fid} 
+	</update> 
+	<update id="update" parameterType="com.qhit.baseFunction.pojo.BaseFunction" > 
+		update base_function 
+		set  fname = #{fname}, mid = #{mid}, url = #{url} 
+		where fid = #{fid} 
+	</update> 
+	<select id="findAll" resultMap="BaseResultMap" > 
+		SELECT * from base_function
+	</select> 
+	<select id="findByFname" resultMap="BaseResultMap" parameterType="java.lang.String" > 
+		select 
+		<include refid="Base_Column_List" /> 
+		from base_function 
+		where fname = #{fname} 
+	</select> 
+	<select id="findByMid" resultMap="BaseResultMap" >
+		select distinct  bf.*
+		from base_function bf  join base_role_function brf on brf.fid = bf.fid
+			join base_role br on br.rid = brf.rid
+			join base_user_role bur on br.rid=bur.rid
+			JOIN base_user bu on bur.uid = bu.user_id
+			join base_module bm on bf.mid = bm.mid
+			and bu.user_id = #{1}
+			and bm.mid = #{0}
+	</select> 
+	<select id="findByUrl" resultMap="BaseResultMap" parameterType="java.lang.String" > 
+		select 
+		<include refid="Base_Column_List" /> 
+		from base_function 
+		where url = #{url} 
+	</select> 
+	<delete id="deleteBatch" parameterType="java.util.Arrays"> 
+		delete from base_function where fid in 
+		<foreach collection="array" item="id" open="(" close=")" separator=","> 
+			#{id} 
+		</foreach> 
+	</delete> 
+	<select id="search" parameterType="com.qhit.baseFunction.pojo.BaseFunction" resultMap="BaseResultMap"> 
+		select * from  base_function 
+		<where > 
+			<if test="fname != null and fname!='' " > 
+				 and fname = #{fname} 
+			</if> 
+			<if test="mid != null and mid!='' " > 
+				 and mid = #{mid} 
+			</if> 
+			<if test="url != null and url!='' " > 
+				 and url = #{url} 
+			</if> 
+		</where> 
+	</select> 
+</mapper> 
